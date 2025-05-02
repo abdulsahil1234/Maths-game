@@ -2,6 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maths Game</title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0T5RVE31MF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-0T5RVE31MF');
+  </script>
+
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+    h1 { color: #333; }
+    input, button { padding: 10px; margin: 10px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Maths Game</h1>
+  <p>Solve the problem:</p>
+  <div id="question"></div>
+  <input type="number" id="answer" placeholder="Your answer" />
+  <button onclick="checkAnswer()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+    let num1 = Math.floor(Math.random() * 10);
+    let num2 = Math.floor(Math.random() * 10);
+    let question = `${num1} + ${num2}`;
+    let correctAnswer = num1 + num2;
+
+    document.getElementById('question').textContent = question;
+
+    function checkAnswer() {
+      let userAnswer = parseInt(document.getElementById('answer').value);
+      if (userAnswer === correctAnswer) {
+        document.getElementById('result').textContent = "Correct!";
+      } else {
+        document.getElementById('result').textContent = "Try again.";
+      }
+    }
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
   <title>Smart Math Game</title>
   <style>
     body { font-family: Arial; text-align: center; background: #f0f0f0; }
