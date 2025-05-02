@@ -9,16 +9,6 @@
     button { padding: 10px 20px; margin: 10px; font-size: 16px; }
     input { padding: 8px; font-size: 16px; }
   </style>
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0T5RVE31MF"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-0T5RVE31MF');
-  </script>
 </head>
 <body>
   <h1>Welcome to Smart Math Game</h1>
@@ -88,9 +78,6 @@
     function setDifficulty(level) {
       difficulty = level;
       document.getElementById("playerName").innerText = "Level: " + level.charAt(0).toUpperCase() + level.slice(1);
-      gtag('event', 'difficulty_change', {
-        'difficulty_level': level
-      });
     }
 
     function startGame() {
@@ -115,16 +102,10 @@
         document.getElementById("feedback").innerText = "Correct!";
         score++;
         document.getElementById("score").innerText = score;
-        gtag('event', 'question_answered', {
-          'correct_answer': true
-        });
         generateQuestion();
       } else {
         document.getElementById("feedback").innerText = "Wrong!";
         document.getElementById("correctAnswer").innerText = "Correct answer was: " + window.currentAnswer;
-        gtag('event', 'question_answered', {
-          'correct_answer': false
-        });
       }
     }
 
@@ -137,9 +118,6 @@
         if (timer === 0) {
           clearInterval(interval);
           alert("Time's up! Final Score: " + score);
-          gtag('event', 'game_over', {
-            'final_score': score
-          });
           backToMenu();
         }
       }, 1000);
