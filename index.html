@@ -4,158 +4,151 @@
   <meta charset="UTF-8">
   <title>Smart Math Game</title>
   <style>
-    body { font-family: Arial; text-align: center; background: #f0f0f0; }
+    body { font-family: Arial; text-align: center; background: #f0f0f0; margin: 0; padding: 20px; }
     .hidden { display: none; }
-    button { padding: 10px 20px; margin: 10px; font-size: 16px; }
-    input { padding: 8px; font-size: 16px; }
+    input, button { padding: 10px; font-size: 16px; margin: 5px; }
   </style>
 </head>
 <body>
-  <h1>Welcome to Smart Math Game</h1>
 
-  <div id="menu">
+  <h1>Smart Math Game</h1>
+
+  <!-- Music -->
+  <audio id="bgMusic" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mpeg">
+    Your browser does not support audio.
+  </audio>
+
+  <!-- Name entry -->
+  <div id="nameEntry">
+    <p>Enter your name:</p>
+    <input type="text" id="playerNameInput" placeholder="Your name" />
+    <button onclick="submitName()">Submit</button>
+  </div>
+
+  <!-- Menu -->
+  <div id="menu" class="hidden">
     <p>Select Difficulty:</p>
     <button onclick="setDifficulty('easy')">Easy</button>
     <button onclick="setDifficulty('medium')">Medium</button>
     <button onclick="setDifficulty('hard')">Hard</button><br>
     <button onclick="startGame()">Start Game</button>
-    <button onclick="showWorkbooks()">School Workbooks</button>
-    <button onclick="showSettings()">Settings</button>
     <button onclick="showLeaderboard()">Leaderboard</button>
   </div>
 
+  <!-- Game area -->
   <div id="gameArea" class="hidden">
-    <h2 id="playerName">Level: Easy</h2>
-    <p id="question">What is 2 + 2?</p>
+    <h2 id="levelTitle">Level: Easy</h2>
+    <p id="question">Question?</p>
     <input type="number" id="answer">
     <button onclick="submitAnswer()">Submit</button>
     <p id="feedback"></p>
-    <p id="correctAnswer"></p>
     <p>Score: <span id="score">0</span></p>
     <p>Time Left: <span id="timer">30</span> sec</p>
     <button onclick="useHint()">Hint</button>
     <button onclick="backToMenu()">Quit</button>
   </div>
 
+  <!-- Leaderboard -->
   <div id="leaderboard" class="hidden">
     <h2>Leaderboard</h2>
     <ul id="leaderboardList">
-      <li>Player 1 - 100</li>
-    </ul>
-    <button onclick="backToMenu()">Back</button>
-  </div>
-
-  <div id="settings" class="hidden">
-    <h2>Settings</h2>
-    <button onclick="toggleMusic()">Toggle Music</button>
-    <button onclick="toggleTheme()">Toggle Dark/Light Mode</button>
-    <button onclick="backToMenu()">Back</button>
-  </div>
-
-  <div id="workbooks" class="hidden">
-    <h2>School Workbooks</h2>
-    <ul>
-      <li>1. Basic Addition Workbook</li>
-      <li>2. Basic Subtraction Workbook</li>
-      <li>3. Multiplication Tables Practice</li>
-      <li>4. Division Basics</li>
-      <li>5. Fractions Practice</li>
-      <li>6. Word Problems</li>
-      <li>7. Time and Clock Exercises</li>
-      <li>8. Money Counting Workbook</li>
-      <li>9. Shapes and Geometry</li>
-      <li>10. Measurement and Units</li>
+      <li>Player1 - 5</li>
     </ul>
     <button onclick="backToMenu()">Back</button>
   </div>
 
   <script>
     let difficulty = 'easy';
+    let playerName = '';
     let score = 0;
     let timer = 30;
     let interval;
+    let correctAnswer = 0;
+
+    function submitName() {
+      const input = document.getElementById('playerNameInput').value.trim();
+      if (input !== '') {
+        playerName = input;
+        document.getElementById('nameEntry').classList.add('hidden');
+        document.getElementById('menu').classList.remove('hidden');
+        document.getElementById('bgMusic').play();
+      } else {
+        alert('Please enter your name.');
+      }
+    }
 
     function setDifficulty(level) {
       difficulty = level;
-      document.getElementById("playerName").innerText = "Level: " + level.charAt(0).toUpperCase() + level.slice(1);
+      document.getElementById('levelTitle').innerText = 'Level: ' + level.toUpperCase();
     }
 
     function startGame() {
-      document.getElementById("menu").classList.add("hidden");
-      document.getElementById("gameArea").classList.remove("hidden");
+      score = 0;
+      document.getElementById('score').innerText = score;
+      document.getElementById('menu').classList.add('hidden');
+      document.getElementById('gameArea').classList.remove('hidden');
       generateQuestion();
       startTimer();
     }
 
     function generateQuestion() {
-      let num1 = Math.floor(Math.random() * 10 + 1);
-      let num2 = Math.floor(Math.random() * 10 + 1);
-      document.getElementById("question").innerText = `What is ${num1} + ${num2}?`;
-      document.getElementById("correctAnswer").innerText = "";
-      document.getElementById("feedback").innerText = "";
-      window.currentAnswer = num1 + num2;
+      let max = difficulty === 'easy' ? 10 : difficulty === 'medium' ? 20 : 50;
+      let num1 = Math.floor(Math.random() * max);
+      let num2 = Math.floor(Math.random() * max);
+      correctAnswer = num1 + num2;
+      document.getElementById('question').innerText = `What is ${num1} + ${num2}?`;
+      document.getElementById('feedback').innerText = '';
     }
 
     function submitAnswer() {
-      let userAns = parseInt(document.getElementById("answer").value);
-      if (userAns === window.currentAnswer) {
-        document.getElementById("feedback").innerText = "Correct!";
+      let userAnswer = parseInt(document.getElementById('answer').value);
+      if (userAnswer === correctAnswer) {
         score++;
-        document.getElementById("score").innerText = score;
+        document.getElementById('feedback').innerText = 'Correct!';
+        document.getElementById('score').innerText = score;
         generateQuestion();
       } else {
-        document.getElementById("feedback").innerText = "Wrong!";
-        document.getElementById("correctAnswer").innerText = "Correct answer was: " + window.currentAnswer;
+        document.getElementById('feedback').innerText = 'Wrong! Try again.';
       }
+      document.getElementById('answer').value = '';
+    }
+
+    function useHint() {
+      alert("Hint: Answer is " + correctAnswer);
     }
 
     function startTimer() {
       timer = 30;
-      document.getElementById("timer").innerText = timer;
+      document.getElementById('timer').innerText = timer;
       interval = setInterval(() => {
         timer--;
-        document.getElementById("timer").innerText = timer;
-        if (timer === 0) {
+        document.getElementById('timer').innerText = timer;
+        if (timer <= 0) {
           clearInterval(interval);
-          alert("Time's up! Final Score: " + score);
-          backToMenu();
+          alert(`Time's up! ${playerName}, your score is ${score}`);
+          showLeaderboard();
         }
       }, 1000);
     }
 
-    function useHint() {
-      alert("Answer is: " + window.currentAnswer);
-    }
-
-    function showSettings() {
-      document.getElementById("menu").classList.add("hidden");
-      document.getElementById("settings").classList.remove("hidden");
-    }
-
     function showLeaderboard() {
-      document.getElementById("menu").classList.add("hidden");
-      document.getElementById("leaderboard").classList.remove("hidden");
-    }
-
-    function showWorkbooks() {
-      document.getElementById("menu").classList.add("hidden");
-      document.getElementById("workbooks").classList.remove("hidden");
+      clearInterval(interval);
+      document.getElementById('gameArea').classList.add('hidden');
+      document.getElementById('menu').classList.add('hidden');
+      document.getElementById('leaderboard').classList.remove('hidden');
+      let list = document.getElementById('leaderboardList');
+      let newItem = document.createElement('li');
+      newItem.textContent = `${playerName} - ${score}`;
+      list.appendChild(newItem);
     }
 
     function backToMenu() {
-      document.querySelectorAll(".hidden").forEach(el => el.classList.add("hidden"));
-      document.getElementById("menu").classList.remove("hidden");
       clearInterval(interval);
-    }
-
-    function toggleMusic() {
-      alert("Music toggle not implemented yet.");
-    }
-
-    function toggleTheme() {
-      alert("Theme toggle not implemented yet.");
+      document.getElementById('leaderboard').classList.add('hidden');
+      document.getElementById('gameArea').classList.add('hidden');
+      document.getElementById('menu').classList.remove('hidden');
     }
   </script>
 </body>
 </html>
-G-0T5RVE31MF
